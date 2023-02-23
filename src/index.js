@@ -38,34 +38,32 @@ const MORSE_TABLE = {
 };
 
 function decode(expr) {
-    let arr = expr.split('');
-    let newArr = arr.map((item) => {
+    let arr = []
+    for(let i = 0; i < expr.length; i+= 10){
+        arr.push(expr.slice(i, i + 10))
+    }
+
+    let arr2 = arr.map(item => {
+         item = item.replace(/00/g, '')
+         item = item.replace(/10/g, '.')
+         item = item.replace(/11/g, '-')
+         item = item.replace(/\*{10}/g, ' ')
+
+         return item
+    })
+
+    let letters = arr2.reduce((acc, cur) => {
         for(let key in MORSE_TABLE){
-            if(MORSE_TABLE[key] == item){                 
-                  item = key;
-            }            
+            if(key == cur) {
+                cur = MORSE_TABLE[key]                
+            }
         }
-        return item        
-    })
-    let newArrChange = newArr.map((item) => {
-        if(item.includes("-")) item = item.replace(/-/g, "10")
-        if(item.includes(".")) item = item.replace(/\./g, "11")
-        if(item.includes(" ")) item = item.replace(/\s/g, "**********")
-        return item
-    })
+        return acc += cur
+    }, '')
+    return letters
 
-    let newArr10 = newArrChange.map((item) => {
-        while(item.length < 10) item = "0" + item
-        return item
-    })
-
-    return newArr10.join('')
-
-    console.log(newArr)
-    console.log(newArrChange)
-    console.log(newArr10)
 }
-decode("me")
+
 
 module.exports = {
     decode
